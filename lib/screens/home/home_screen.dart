@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gobid_admin/screens/home/blocked_useres/blocked_users.dart';
 import 'package:gobid_admin/screens/home/end_auctions/end_auction_screen.dart';
 
 import 'exist_list/exists_products_list.dart';
@@ -21,6 +22,15 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.blue,
           title: Text('GoBid'),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => BlockedUsers()));
+              },
+              icon: Icon(Icons.lock),
+            )
+          ],
           bottom: const TabBar(
             tabs: [
               Tab(
@@ -28,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.my_library_add),
               ),
               Tab(
-                text: 'All Products',
+                text: 'Confirmed',
                 icon: Icon(Icons.filter),
               ),
               Tab(

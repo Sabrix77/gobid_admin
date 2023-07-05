@@ -12,7 +12,8 @@ class DBUtilsChat {
 
   static Stream<QuerySnapshot<Chat>> getAllChat() {
     var ref = getChatCollectionRef();
-    Stream<QuerySnapshot<Chat>> chatSnapshot = ref.snapshots();
+    Stream<QuerySnapshot<Chat>> chatSnapshot =
+        ref.orderBy('timeStamp', descending: true).snapshots();
     return chatSnapshot;
   }
 
@@ -20,6 +21,20 @@ class DBUtilsChat {
     var ref = getChatCollectionRef();
     //chat.id  means client id
     return await ref.doc(chat.id).set(chat);
+  }
+
+  static updateChatContent({
+    required String chatId,
+    required String lastContent,
+    required String timeStamp,
+  }) async {
+    var ref = getChatCollectionRef();
+    //chat.id  means client id
+
+    return await ref.doc(chatId).update({
+      'lastContent': lastContent,
+      'timeStamp': timeStamp,
+    });
   }
 
   ///for MESSAGES

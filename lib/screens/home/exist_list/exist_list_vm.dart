@@ -1,6 +1,7 @@
 import 'package:gobid_admin/base.dart';
 import 'package:gobid_admin/network/remote/db_utils_products.dart';
-import 'package:gobid_admin/shared/strings/app_strings.dart';
+import 'package:gobid_admin/shared/constants/app_strings.dart';
+import 'package:gobid_admin/shared/constants/enums.dart';
 
 import '../../../model/product.dart';
 
@@ -11,7 +12,8 @@ class ExistListViewModel extends BaseViewModel {
 
   void getAllConfirmedProducts() async {
     try {
-      products = await DBUtilsProducts.getSelectedProductsList(confirmed: true);
+      products = await DBUtilsProducts.getSelectedProductsList(
+          auctionState: AuctionState.confirmed.name);
     } catch (e) {
       errorMessage = AppStrings.somethingWontWrong;
     }

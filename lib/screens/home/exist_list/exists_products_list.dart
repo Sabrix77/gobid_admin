@@ -3,7 +3,7 @@ import 'package:gobid_admin/base.dart';
 import 'package:gobid_admin/screens/home/exist_list/exist_list_navigator.dart';
 import 'package:gobid_admin/screens/home/exist_list/exist_list_vm.dart';
 import 'package:gobid_admin/shared/components/utilis.dart' as utils;
-import 'package:gobid_admin/shared/strings/app_strings.dart';
+import 'package:gobid_admin/shared/constants/app_strings.dart';
 import 'package:provider/provider.dart';
 
 class ExistProductsList extends StatefulWidget {
@@ -39,7 +39,8 @@ class _ExistProductsListState
             return const Center(child: CircularProgressIndicator());
           }
           if (existVM.products!.isEmpty) {
-            return const Center(child: Text('Empty Product List'));
+            return Center(
+                child: Image.asset('assets/images/empty-confirmed.png'));
           }
           if (existVM.errorMessage != null) {
             return const Center(child: Text(AppStrings.somethingWontWrong));
@@ -80,7 +81,7 @@ class _ExistProductsListState
                                     //Text(endDate.toString().substring(0,10)),
                                     const SizedBox(height: 8),
                                     Text(
-                                        '${existVM.products![index].biggestBid.toString()} LE',
+                                        '${existVM.products![index].biggestBid.last.toString()} LE',
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontSize: 18,
@@ -135,5 +136,10 @@ class _ExistProductsListState
     },
         negativeBtnTxt: 'Cancel',
         negativeBtnAct: (context) => viewModel.navigator!.hideDialog());
+  }
+
+  @override
+  void hideDialog() {
+    Navigator.of(context, rootNavigator: true).pop();
   }
 }

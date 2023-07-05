@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gobid_admin/base.dart';
 import 'package:gobid_admin/model/chat.dart';
@@ -36,7 +35,10 @@ class _MessagesScreenState extends BaseView<MessagesScreen, MessagesViewModel>
   @override
   Widget build(BuildContext context) {
     var authProvider = Provider.of<AuthProvider>(context);
-    Chat chat = ModalRoute.of(context)!.settings.arguments as Chat;
+    Chat newChat = ModalRoute.of(context)!.settings.arguments as Chat;
+    if (newChat.lastContent == null)
+      messageController.text =
+          'Congratulations sir 🎉,\nYou Are Our Auction Winner\nPlease Confirm and Continue from Winning Products section';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Support'),
@@ -60,7 +62,7 @@ class _MessagesScreenState extends BaseView<MessagesScreen, MessagesViewModel>
             Expanded(
                 // child: Container(),
                 child: StreamBuilder<QuerySnapshot<Message>>(
-              stream: viewModel.getMessages(chat.id),
+                  stream: viewModel.getMessages(newChat.id),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -69,13 +71,13 @@ class _MessagesScreenState extends BaseView<MessagesScreen, MessagesViewModel>
                 }
                 var messages =
                     snapshot.data?.docs.map((e) => e.data()).toList() ?? [];
-                print('======msg=======${messages.length}');
+                print('======msg${messages.length}');
 
                 return ListView.builder(
+                  itemCount: messages.length,
                   itemBuilder: (context, index) {
                     return MessageWidget(messages[index]);
                   },
-                  itemCount: messages.length ?? 0,
                 );
               },
             )),
@@ -87,8 +89,11 @@ class _MessagesScreenState extends BaseView<MessagesScreen, MessagesViewModel>
                   Expanded(
                     child: TextFormField(
                       controller: messageController,
+                      minLines: 1,
+                      maxLines: 4,
                       decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                           hintText: "type a message",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.only(
@@ -120,8 +125,14 @@ class _MessagesScreenState extends BaseView<MessagesScreen, MessagesViewModel>
                             content: messageController.text,
                             timestamp: timestamp,
                           );
-                          chat.lastContent = messageController.text;
-                          viewModel.sendMessage(message: message, chat: chat);
+                          newChat.lastContent = messageController.text;
+                          newChat.timeStamp = id;
+                          // chat.lastContent = messageController.text;
+                          // chat.timeStamp=id;
+                          viewModel.sendMessage(
+                            message: message,
+                            chat: newChat,
+                          );
                           messageController.clear();
                         },
                         child: const Icon(Icons.send,

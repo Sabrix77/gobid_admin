@@ -4,33 +4,18 @@ import 'package:gobid_admin/network/remote/db_utils_products.dart';
 import 'package:gobid_admin/shared/constants/app_strings.dart';
 import 'package:gobid_admin/shared/constants/enums.dart';
 
-class WaitingListVieModel extends BaseViewModel {
+class CanceledViewModel extends BaseViewModel {
   List<Product>? products;
+  String? errorMsg;
 
-  String? errorMessage;
-
-  void getWaitedProducts() async {
+  void getAllCanceledProducts() async {
     try {
       products = await DBUtilsProducts.getSelectedProductsList(
-          auctionState: AuctionState.waitingConfirmation.name);
+          auctionState: AuctionState.canceled.name);
     } catch (e) {
-      errorMessage = AppStrings.somethingWontWrong;
+      errorMsg = '';
     }
     notifyListeners();
-  }
-
-  void updateProduct(Product product) async {
-    try {
-      navigator!.showLoading();
-      product.auctionState = AuctionState.confirmed.name;
-      await DBUtilsProducts.updateProductInFirestore(product);
-      navigator!.hideDialog();
-      navigator!.showMessage(AppStrings.successfullyUploaded, AppStrings.ok);
-      getWaitedProducts();
-    } catch (e) {
-      navigator!.hideDialog();
-      navigator!.showMessage(AppStrings.somethingWontWrong, AppStrings.ok);
-    }
   }
 
   void deleteProduct(String productID) async {
@@ -42,7 +27,7 @@ class WaitingListVieModel extends BaseViewModel {
       navigator!.showMessage(AppStrings.successfullyDeleted, AppStrings.ok);
 
       ///to rebuild screen after item is deleted
-      getWaitedProducts();
+      getAllCanceledProducts();
     } catch (e) {
       navigator!.hideDialog();
       navigator!.showMessage(AppStrings.somethingWontWrong, AppStrings.ok);

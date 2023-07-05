@@ -12,6 +12,7 @@ class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<AuthProvider>(context);
+
     return provider.myUser!.id == message.senderId
         ? SenderMessage(message)
         : ReciverMessage(message);

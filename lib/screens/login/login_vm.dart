@@ -3,7 +3,7 @@ import 'package:gobid_admin/base.dart';
 import 'package:gobid_admin/model/my_user.dart';
 import 'package:gobid_admin/network/remote/db_utils_auth.dart';
 import 'package:gobid_admin/screens/login/login_navigator.dart';
-import 'package:gobid_admin/shared/strings/app_strings.dart';
+import 'package:gobid_admin/shared/constants/app_strings.dart';
 
 class LoginViewModel extends BaseViewModel<LoginNavigator> {
   loginWithEmailAndPassword(String email, String password) async {

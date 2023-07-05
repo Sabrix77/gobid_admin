@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gobid_admin/model/product.dart';
+import 'package:gobid_admin/shared/constants/enums.dart';
 
 class DBUtilsProducts {
   static CollectionReference<Product> getProductCollectionRef() {
@@ -12,7 +13,7 @@ class DBUtilsProducts {
         );
   }
 
-  static setProductToFirestore(Product product) async {
+  static updateProductInFirestore(Product product) async {
     var ref = getProductCollectionRef();
     return await ref.doc(product.id).set(product);
   }
@@ -23,33 +24,49 @@ class DBUtilsProducts {
   }
 
   static Future<List<Product>> getSelectedProductsList(
-      {required bool confirmed}) async {
-    // this method showing confirmed products for user
+      {required String auctionState}) async {
     try {
       var ref = getProductCollectionRef();
       QuerySnapshot<Product> productsSnapshot =
-          await ref.where('available', isEqualTo: confirmed).get();
-
+          await ref.where('auctionState', isEqualTo: auctionState).get();
       List<Product> products =
           productsSnapshot.docs.map((e) => e.data()).toList();
+      print('==----==');
+
       return products;
     } catch (e) {
+      print('==----==$e');
       rethrow;
     }
   }
 
-  static Future<List<Product>> getProductsListByTitleSearch(
-      String title) async {
+  static Stream<QuerySnapshot<Product>> getStreamSelectedProductsList(
+      {required String auctionState}) {
+    try {
+      var ref = getProductCollectionRef();
+      Stream<QuerySnapshot<Product>> productsSnapshot =
+          ref.where('auctionState', isEqualTo: auctionState).snapshots();
+
+      return productsSnapshot;
+    } catch (e) {
+      print('==----==$e');
+      rethrow;
+    }
+  }
+
+  static Future<List<Product>> getNewWinnersProductsList() async {
     try {
       var ref = getProductCollectionRef();
       QuerySnapshot<Product> productsSnapshot = await ref
-          .orderBy('title')
-          .startAt([title]).endAt(['$title\uf8ff']).get();
+          .where('auctionState', isEqualTo: AuctionState.hasWinner.name)
+          .get();
+
       List<Product> products =
           productsSnapshot.docs.map((e) => e.data()).toList();
       return products;
     } catch (e) {
-      print('=========$e');
+      print('==----==$e');
+
       rethrow;
     }
   }
@@ -59,7 +76,7 @@ class DBUtilsProducts {
       var ref = getProductCollectionRef();
       print('=========DB=$date');
       QuerySnapshot<Product> productsSnapshot = await ref
-          .where('available', isEqualTo: true)
+          .where('auctionState', isEqualTo: AuctionState.confirmed.name)
           .where('endDate', isEqualTo: date)
           .get();
       List<Product> products =

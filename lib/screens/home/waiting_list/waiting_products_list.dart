@@ -4,7 +4,7 @@ import 'package:gobid_admin/model/product.dart';
 import 'package:gobid_admin/screens/home/waiting_list/waiting_list_navigator.dart';
 import 'package:gobid_admin/screens/home/waiting_list/waiting_list_vm.dart';
 import 'package:gobid_admin/shared/components/utilis.dart' as utils;
-import 'package:gobid_admin/shared/strings/app_strings.dart';
+import 'package:gobid_admin/shared/constants/app_strings.dart';
 import 'package:provider/provider.dart';
 
 class WaitingProductsList extends StatefulWidget {
@@ -40,7 +40,8 @@ class _WaitingProductsListState
             return const Center(child: CircularProgressIndicator());
           }
           if (waitingVM.products!.isEmpty) {
-            return const Center(child: Text('Empty Product List'));
+            return Center(
+                child: Image.asset('assets/images/empty-waitinglist.png'));
           }
           if (waitingVM.errorMessage != null) {
             return const Center(child: Text(AppStrings.somethingWontWrong));
@@ -85,7 +86,7 @@ class _WaitingProductsListState
                           ),
                           const SizedBox(height: 10),
                           Text(
-                              'Start With ${waitingVM.products![index].biggestBid.toString()} LE, and End @ ${endDate}',
+                              'Start With ${waitingVM.products![index].price.toString()} LE, and End @ ${endDate}',
                               //overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
@@ -169,13 +170,30 @@ class _WaitingProductsListState
   }
 
   void deleteProduct(String productID) {
-    utils.showMessage(
-        context, 'Are you sure you want to delete this item?', 'Delete',
-        (context) {
-      viewModel.deleteProduct(productID);
-      viewModel.navigator!.hideDialog();
-    },
-        negativeBtnTxt: 'Cancel',
-        negativeBtnAct: (context) => viewModel.navigator!.hideDialog());
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Are you sure you want to delete this item?'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel')),
+              ElevatedButton(
+                  onPressed: () {
+                    viewModel.deleteProduct(productID);
+                    viewModel.navigator!.hideDialog();
+                  },
+                  child: Text('Delete'))
+            ],
+          );
+        });
+  }
+
+  @override
+  void hideDialog() {
+    Navigator.of(context, rootNavigator: true).pop();
   }
 }

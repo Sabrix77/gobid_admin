@@ -1,11 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gobid_admin/model/product.dart';
 
 class ProductCard extends StatelessWidget {
   Product product;
   String sellerName;
+  String? winnerName;
   Function() onPressed;
+  String btnTxt;
+  String? cancelBtnTxt;
+  Function()? cancelBtnPress;
 
   // Function()? onPressed;
   //  ProductCard({required this.product, this.onPressed});
@@ -13,7 +16,11 @@ class ProductCard extends StatelessWidget {
   ProductCard(
       {required this.product,
       required this.sellerName,
-      required this.onPressed});
+      required this.onPressed,
+      required this.btnTxt,
+      this.winnerName,
+      this.cancelBtnPress,
+      this.cancelBtnTxt});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +36,9 @@ class ProductCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 SizedBox(
-                  height: 200,
+                  height: 210,
                   child: Card(
-                    elevation: 6,
+                    elevation: 2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5),
                       child: Row(
@@ -45,48 +52,94 @@ class ProductCard extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   product.title,
-                                  //overflow: TextOverflow.ellipsis,
+                                  overflow: TextOverflow.ellipsis,
                                   maxLines: 3,
                                   style: Theme.of(context)
                                       .textTheme
                                       .subtitle1!
                                       .copyWith(fontWeight: FontWeight.bold),
                                 ),
-                                Text(
-                                  product.description,
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle2!
-                                      .copyWith(color: Colors.grey),
-                                ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Biggest Price : ${product.biggestBid.toString()} LE',
+                                  'Initial Price : ${product.price.toString()} LE',
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
                                       .textTheme
                                       .subtitle2!
                                       .copyWith(color: Colors.grey),
                                 ),
-                                product.biggestBid == product.price
-                                    ? const Text('No one raise the bid!',
+                                if (winnerName == null)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('No one raise the bid!',
+                                          style: TextStyle(
+                                              color: Colors.redAccent,
+                                              fontSize: 14)),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Seller: $sellerName',
                                         style: TextStyle(
-                                            color: Colors.redAccent,
-                                            fontSize: 12))
-                                    : const SizedBox(),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Seller: $sellerName',
-                                  style: TextStyle(fontStyle: FontStyle.italic),
-                                ),
+                                            fontStyle: FontStyle.italic),
+                                      ),
+                                    ],
+                                  )
+                                else
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Biggest Price : ${product.biggestBid.last.toString()} LE',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle2!
+                                            .copyWith(color: Colors.grey),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        'Seller: $sellerName',
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.italic),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text('winner: ',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic)),
+                                          Expanded(
+                                            child: Text(winnerName!,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontStyle:
+                                                        FontStyle.italic)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    cancelBtnPress == null
+                                        ? const SizedBox()
+                                        : ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.redAccent,
+                                                foregroundColor: Colors.white),
+                                            onPressed: cancelBtnPress,
+                                            child: Text(cancelBtnTxt!),
+                                          ),
+                                    SizedBox(width: 10),
                                     ElevatedButton(
-                                        onPressed: onPressed,
-                                        child: Text('End Auction')),
+                                      onPressed: onPressed,
+                                      child: Text(btnTxt),
+                                    ),
                                   ],
                                 )
                               ],

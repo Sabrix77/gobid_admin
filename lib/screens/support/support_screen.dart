@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gobid_admin/base.dart';
 import 'package:gobid_admin/model/chat.dart';
 import 'package:gobid_admin/screens/support/messages/messages_screen.dart';
 import 'package:gobid_admin/screens/support/support_navigator.dart';
 import 'package:gobid_admin/screens/support/support_vm.dart';
-import 'package:gobid_admin/shared/strings/app_strings.dart';
+import 'package:gobid_admin/shared/constants/app_strings.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({Key? key}) : super(key: key);
@@ -57,73 +56,75 @@ class _SupportScreenState extends BaseView<SupportScreen, SupportViewModel>
                   if (snapshot.hasError) {
                     return const Center(
                         child: Text(AppStrings.somethingWontWrong));
-                  } else {
-                    List<Chat> chats =
-                        snapshot.data!.docs.map((e) => e.data()).toList();
-                    print('================${chats.length}');
-                    return ListView.separated(
-                        itemCount: chats.length,
-                        separatorBuilder: (context, index) => const Divider(
-                              thickness: 1,
-                              height: 14,
-                              color: Colors.black12,
-                              indent: 70,
-                              endIndent: 10,
-                            ),
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              //naviget to message with user id
-                              Navigator.of(context, rootNavigator: true)
-                                  .pushNamed(MessagesScreen.routeName,
-                                      arguments: chats[index]);
-                            },
-                            child: Container(
-                              //color: Colors.grey[100],
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 6),
-
-                              //height: 80,
-                              child: Row(
-                                children: [
-                                  const CircleAvatar(
-                                    radius: 28,
-                                    backgroundColor: Colors.black45,
-                                    child: CircleAvatar(
-                                      backgroundImage: AssetImage(
-                                          'assets/images/avatar.jpg'),
-                                      radius: 27,
-
-                                      // minRadius: 28,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(chats[index].name,
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500)),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          chats[index].lastContent,
-                                          overflow: TextOverflow.ellipsis,
-                                          style:
-                                              TextStyle(color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        });
                   }
+
+                  List<Chat> chats =
+                      snapshot.data!.docs.map((e) => e.data()).toList();
+                  if (chats.isEmpty) {
+                    return Center(
+                        child: Image.asset('assets/images/empty-messages.png'));
+                  }
+                  return ListView.separated(
+                      itemCount: chats.length,
+                      separatorBuilder: (context, index) => const Divider(
+                            thickness: 1,
+                            height: 14,
+                            color: Colors.black12,
+                            indent: 70,
+                            endIndent: 10,
+                          ),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            //naviget to message with user id
+                            Navigator.of(context, rootNavigator: true)
+                                .pushNamed(MessagesScreen.routeName,
+                                    arguments: chats[index]);
+                          },
+                          child: Container(
+                            //color: Colors.grey[100],
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+
+                            //height: 80,
+                            child: Row(
+                              children: [
+                                const CircleAvatar(
+                                  radius: 28,
+                                  backgroundColor: Colors.black45,
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage('assets/images/avatar.jpg'),
+                                    radius: 27,
+
+                                    // minRadius: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(chats[index].name,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500)),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        chats[index].lastContent ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: Colors.black54),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      });
                 },
               ),
             ),

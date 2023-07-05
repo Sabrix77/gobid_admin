@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gobid_admin/screens/canceled/canceled_screen.dart';
+import 'package:gobid_admin/screens/delivered_auctions/delivery_auctions_screen.dart';
 import 'package:gobid_admin/screens/home/home_screen.dart';
-import 'package:gobid_admin/screens/profile/profile_screen.dart';
-import 'package:gobid_admin/screens/search/search_screen.dart';
 import 'package:gobid_admin/screens/support/support_screen.dart';
-import 'package:gobid_admin/screens/winnig_products/winning_products_screen.dart';
+import 'package:gobid_admin/screens/winnig_products/new_winners/new_winners_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class HomeLayout extends StatefulWidget {
@@ -15,7 +15,7 @@ class HomeLayout extends StatefulWidget {
 }
 
 class _HomeLayoutState extends State<HomeLayout> {
-  final PersistentTabController _controller =
+  PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
   @override
@@ -23,6 +23,9 @@ class _HomeLayoutState extends State<HomeLayout> {
     return Scaffold(
       body: PersistentTabView(
         context,
+        onItemSelected: (value) {
+          setState(() {});
+        },
         controller: _controller,
         screens: _buildScreens(),
         items: _navBarsItems(),
@@ -55,50 +58,50 @@ class _HomeLayoutState extends State<HomeLayout> {
           duration: Duration(milliseconds: 600),
         ),
         navBarStyle:
-            NavBarStyle.style15, // Choose the nav bar style with this property.
+            NavBarStyle.style14, // Choose the nav bar style with this property.
       ),
     );
   }
 
   List<Widget> _buildScreens() {
     return [
-      WinningProductsScreen(),
-      SearchScreen(),
       HomeScreen(),
+      NewWinnersScreen(),
+      DeliveredAuctions(),
+      CanceledScreen(),
       SupportScreen(),
-      ProfileScreen(),
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.bag_fill_badge_plus),
+        icon: Icon(CupertinoIcons.home),
+        title: ("Home"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(CupertinoIcons.bag_badge_plus),
         title: ("Winners"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.search),
-        title: ("Search"),
+        icon: Icon(CupertinoIcons.check_mark_circled),
+        title: ("Delivered"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.home, color: Colors.white),
-        title: ("Home"),
+        icon: Icon(CupertinoIcons.bag_badge_minus),
+        title: ("Canceled"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.chat_bubble_2),
         title: ("Support"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.person),
-        title: ("Profile"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),

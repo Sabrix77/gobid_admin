@@ -34,19 +34,18 @@ class _EndAuctionsScreenState
     viewModel.getProductsByEndDate(selectedDate);
     return ChangeNotifierProvider(
       create: (_) => viewModel,
-      child: Scaffold(
-        body: Column(
-          children: [
-            const SizedBox(height: 10),
-            CalendarTimeline(
-              initialDate: selectedDate,
-              firstDate: DateTime.now().subtract(const Duration(days: 30)),
-              lastDate: DateTime.now().add(const Duration(days: 30)),
-              onDateSelected: (date) {
-                viewModel.getProductsByEndDate(date);
-              },
-              leftMargin: 20,
-              monthColor: Colors.blueGrey,
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          CalendarTimeline(
+            initialDate: selectedDate,
+            firstDate: DateTime.now().subtract(const Duration(days: 30)),
+            lastDate: DateTime.now().add(const Duration(days: 30)),
+            onDateSelected: (date) {
+              viewModel.getProductsByEndDate(date);
+            },
+            leftMargin: 20,
+            monthColor: Colors.blueGrey,
               dayColor: Colors.teal[200],
               activeDayColor: Colors.white,
               activeBackgroundDayColor: Colors.redAccent[100],
@@ -60,32 +59,48 @@ class _EndAuctionsScreenState
                 return const Center(child: CircularProgressIndicator());
               }
               if (endAuctionsVm.products!.isEmpty) {
-                return const Center(
-                  child: Text('No Auctions For today'),
-                );
-              }
-              if (endAuctionsVm.errorMssage != null) {
+              return Center(
+                child: Column(
+                  children: [
+                    // SizedBox(height: 20),
+                    //  Text('No auctions for today'),
+                    Image.asset('assets/images/end_auction.png'),
+                  ],
+                ),
+              );
+            }
+            if (endAuctionsVm.errorMssage != null) {
                 return const Center(
                   child: Text('Something went wrong'),
                 );
               }
-              return Expanded(
+
+            return Expanded(
                 child: ListView.separated(
                   itemCount: endAuctionsVm.products!.length,
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     return ProductCard(
-                      product: endAuctionsVm.products![index],
-                      sellerName: endAuctionsVm.sellersName[index],
-                      onPressed: () {},
-                    );
-                  },
-                ),
-              );
-            })
-          ],
-        ),
+                    product: endAuctionsVm.products![index],
+                    sellerName: endAuctionsVm.sellersName[index],
+                    winnerName: endAuctionsVm.winnersName[index],
+                    onPressed: () {
+                      viewModel.updateProduct(
+                          endAuctionsVm.products![index], selectedDate);
+                    },
+                    btnTxt: 'End Auction',
+                  );
+                },
+              ),
+            );
+          })
+        ],
       ),
     );
+  }
+
+  @override
+  void hideDialog() {
+    Navigator.of(context, rootNavigator: true).pop();
   }
 }
